@@ -8,11 +8,11 @@ import {
 } from 'react-native';
 
 import Login from "./components/Login";
-import Boiler from "./components/Boiler";
+import Map from "./components/Map";
 // import ForgetPassword from "./app/components/ForgetPassword";
 import Register from "./components/Register";
 
-import { StackNavigator } from "react-navigation";
+import { createStackNavigator } from "react-navigation";
 
 class Home extends Component {
   static navigationOptions = {
@@ -32,7 +32,7 @@ class Home extends Component {
   }
 }
 
-export default App = StackNavigator({
+export default App = createStackNavigator({
   Home: {
     screen: Home,
     navigationOptions: {
@@ -57,10 +57,10 @@ export default App = StackNavigator({
   //     title: "ForgetPassword"
   //   }
   // },
-  Boiler: {
-    screen: Boiler,
+  Map: {
+    screen: Map,
     navigationOptions: {
-      title: "Boiler"
+      title: "Map"
     }
   }
 });

@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import {
   AppRegistry,
+  Button,
   KeyboardAvoidingView,
   TouchableOpacity,
   AsyncStorage,
@@ -11,75 +12,113 @@ import {
   View // Container component
 } from "react-native";
 
-import { StackNavigator } from "react-navigation";
+import * as api from "../api"
+
+import Map from '../components/Map'
+
+import { createStackNavigator } from "react-navigation";
 
 export default class Login extends Component {
-    state = {
+  state = {
+   error: false
+  }
 
-    }
+  loginUser = (user) => {
+    api.getUserAfterLogin(user)
+    .then(user => {
+      const { name, score, username } = user
+      const mainUser = { name, score, username } 
+      this.setState({ 
+        password: '',
+        error: false 
+      })
+      AsyncStorage.setItem("mainUser", JSON.stringify(mainUser))
+      if (user) this.props.navigation.navigate("Map")
+      else this.setState({
+        error: true
+      })
+    })
+  }
 
-    render() {
-        return (
-          <View style={styles.container}>
-            <View behavior="padding" style={styles.container}>
-              <View style={styles.logoContainer}>
-                <Text style={styles.subtext}>Capture the Flag</Text>
-              </View>
-              <KeyboardAvoidingView style={styles.keyboard}>
-                <View style={styles.window}>
-                  <TextInput
-                    placeholder="Username"
-                    placeholderTextColor="rgba(255,255,255,0.7)"
-                    returnKeyType="next"
-                    onSubmitEditing={() => this.passwordInput.focus()}
-                    keyboardType="email-address"
-                    autoCapitalize="none"
-                    autoCorrect={false}
-                    value={this.state.email}
-                    onChangeText={email => this.setState({ email })}
-                  />
-                </View>
-                <View style={styles.window}>
-                  <TextInput
-                    placeholder="Password"
-                    placeholderTextColor="rgba(255,255,255,0.7)"
-                    returnKeyType="go"
-                    secureTextEntry
-                    ref={input => (this.passwordInput = input)}
-                    value={this.state.password}
-                    onChangeText={password => this.setState({ password })}
-                  />
-                </View>
-                <TouchableOpacity
-                  style={styles.buttonContainer}
-                  //onPress={this.onLoginPress.bind(this)}
-                >
-                  <Text style={styles.buttonText}>LOGIN</Text>
-                </TouchableOpacity>
-              </KeyboardAvoidingView>
-            </View>
-            <TouchableOpacity style={styles.button}>
-              <Text
-                style={styles.buttonText}
-                onPress={() => this.props.navigation.navigate("Register")}
-                title="Sign up"
-              >
-                Sign up
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.button}>
-              <Text
-                style={styles.buttonText}
-                // onPress={() => this.props.navigation.navigate("ForgetPassword")}
-                title="Forget Password"
-              >
-                Forget Password
-              </Text>
-            </TouchableOpacity>
+  render() {
+    // const text = !this.state.error ? null : 'Incorrect user details, please try again'
+    // if (this.state.mainUser) return <Map navigation={this.props.navigation}/>
+    return (
+      <View style={styles.container}>
+        <View behavior="padding" style={styles.container}>
+          <View style={styles.logoContainer}>
+            <Text style={styles.subtext}>Capture the Flag</Text>
           </View>
-        );
-      }
-    }
+          {this.state.error && (<Text>Incorrect user details, please try again</Text>)}
+          <KeyboardAvoidingView style={styles.keyboard}>
+            <View style={styles.window}>
+              <TextInput
+                placeholder="Username"
+                placeholderTextColor="rgba(255,255,255,0.7)"
+                returnKeyType="next"
+                onSubmitEditing={() => this.passwordInput.focus()}
+                keyboardType="default"
+                autoCapitalize="none"
+                autoCorrect={false}
+                value={this.state.username}
+                onChangeText={username => this.setState({ username })}
+              />
+            </View>
+            <View style={styles.window}>
+              <TextInput
+                placeholder="Password"
+                placeholderTextColor="rgba(255,255,255,0.7)"
+                returnKeyType="go"
+                secureTextEntry
+                ref={input => (this.passwordInput = input)}
+                value={this.state.password}
+                onChangeText={password => this.setState({ password })}
+              />
+            </View>
+            <TouchableOpacity style={styles.buttonContainer}>
+              <Text 
+              onPress={() => this.loginUser(this.state)}
+              title="LOGIN" 
+              style={styles.buttonText}>LOGIN</Text>
+            </TouchableOpacity>
+          </KeyboardAvoidingView>
+        </View>
+        <TouchableOpacity style={styles.button}>
+          <Text
+            style={styles.buttonText}
+            onPress={() => this.props.navigation.navigate("Register")}
+            title="Sign up"
+          >
+            Sign up
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button}>
+          <Text
+            style={styles.buttonText}
+            // onPress={() => this.props.navigation.navigate("ForgetPassword")}
+            title="Forget Password"
+          >
+            Forget Password
+          </Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
+  componentDidMount() {
+    AsyncStorage.getItem('mainUser')
+    .then((res) => {
+      const { name, username, score } = JSON.parse(res)
+      this.setState({
+        mainUser: { name, username, score }
+      })
+      console.log(this.state)
+    })
+  }
+
+   
+  
+}
 
 
 const styles = StyleSheet.create({

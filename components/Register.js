@@ -11,7 +11,9 @@ import {
   AsyncStorage
 } from "react-native";
 
-import { StackNavigator } from "react-navigation";
+import * as api from "../api"
+
+import { createStackNavigator } from "react-navigation";
 
 export default class Register extends Component {
   constructor(props) {
@@ -31,15 +33,23 @@ export default class Register extends Component {
     }
   };
 
-  async onRegisterPress() {
-    const { email, password, name } = this.state;
-    console.log(email);
-    console.log(name);
-    console.log(password);
-    await AsyncStorage.setItem("email", email);
-    await AsyncStorage.setItem("name", name);
-    await AsyncStorage.setItem("password", password);
-    this.props.navigation.navigate("Boiler");
+  onRegisterPress = user => {
+    api.addUser(user)
+    .then(user => {
+      const { name, username, score } = user
+      if (name !== 'UserExistsError') {
+      this.setState({
+        name, 
+        username, 
+        score, 
+        password: "", 
+        confirm: ""
+      })
+    }
+      console.log(user)
+    })
+    .catch(error => console.log(error, '<<<<< ERROR'))
+    this.props.navigation.navigate("Map");
   }
 
   render() {
@@ -60,17 +70,17 @@ export default class Register extends Component {
             onSubmitEditing={() => this.emailInput.focus()}
           />
           <TextInput
-            value={this.state.email}
-            onChangeText={email => this.setState({ email })}
+            value={this.state.username}
+            onChangeText={username => this.setState({ username })}
             style={styles.input}
             placeholderTextColor="rgba(255,255,255,0.7)"
             returnKeyType="next"
             ref={input => (this.emailInput = input)}
             onSubmitEditing={() => this.passwordCInput.focus()}
-            keyboardType="email-address"
+            keyboardType="default"
             autoCapitalize="none"
             autoCorrect={false}
-            placeholder="Email"
+            placeholder="Username"
           />
           <TextInput
             value={this.state.password}
@@ -85,19 +95,18 @@ export default class Register extends Component {
             secureTextEntry
           />
           <TextInput
-            value={this.state.password}
-            onChangeText={password_confirmation => this.setState({ password_confirmation })}
+            onChangeText={confirm => this.setState({ confirm })}
             style={styles.input}
             placeholder="Confirm Password"
             secureTextEntry={true}
             placeholderTextColor="rgba(255,255,255,0.7)"
             returnKeyType="go"
             secureTextEntry
-            ref={input => (this.passwordInput = input)}
+            // ref={input => (this.passwordInput = input)}
           />
         </KeyboardAvoidingView>
         <TouchableHighlight
-          onPress={this.onRegisterPress.bind(this)}
+          onPress={() => this.onRegisterPress(this.state)}
           style={styles.button}
         >
           <Text style={styles.buttonText}>Register</Text>
