@@ -23,7 +23,7 @@ export default class Login extends Component {
           <View style={styles.container}>
             <View behavior="padding" style={styles.container}>
               <View style={styles.logoContainer}>
-                <Text style={styles.subtext}>Humdum</Text>
+                <Text style={styles.subtext}>Capture the Flag</Text>
               </View>
               <KeyboardAvoidingView style={styles.keyboard}>
                 <View style={styles.window}>
@@ -61,7 +61,7 @@ export default class Login extends Component {
             <TouchableOpacity style={styles.button}>
               <Text
                 style={styles.buttonText}
-                //onPress={() => this.props.navigation.navigate("Register")}
+                onPress={() => this.props.navigation.navigate("Register")}
                 title="Sign up"
               >
                 Sign up
@@ -70,7 +70,7 @@ export default class Login extends Component {
             <TouchableOpacity style={styles.button}>
               <Text
                 style={styles.buttonText}
-                //onPress={() => this.props.navigation.navigate("ForgetPassword")}
+                // onPress={() => this.props.navigation.navigate("ForgetPassword")}
                 title="Forget Password"
               >
                 Forget Password
@@ -100,9 +100,10 @@ const styles = StyleSheet.create({
     subtext: {
       color: "#ffffff",
       marginTop: 10,
-      width: 160,
+      width: 260,
       textAlign: "center",
-      opacity: 0.8
+      opacity: 0.8,
+      fontSize: 40
     },
     keyboard: {
       margin: 20,
