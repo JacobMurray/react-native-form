@@ -19,10 +19,8 @@ export default class Register extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      username: "",
-      name: "",
-      password: "",
-      confirm: ""
+      error: false,
+      nameExist: false
     };
   }
 
@@ -36,29 +34,42 @@ export default class Register extends Component {
   onRegisterPress = user => {
     api.addUser(user)
     .then(user => {
-      const { name, username, score } = user
+      const { name, score, username } = user
+      const mainUser = { name, score, username } 
+      if (name === 'UserExistsError') {
+        this.setState({
+          nameExist: true
+        })
+      }
       if (name !== 'UserExistsError') {
       this.setState({
-        name, 
-        username, 
-        score, 
         password: "", 
         confirm: ""
       })
+      AsyncStorage.setItem("mainUser", JSON.stringify(mainUser))
+      this.props.navigation.navigate("Map");
     }
-      console.log(user)
     })
-    .catch(error => console.log(error, '<<<<< ERROR'))
-    this.props.navigation.navigate("Map");
+    .catch(() => {
+      this.setState({
+        error: true
+      })
+    })
   }
 
   render() {
+    const text = this.state.nameExist ? 'Username already exists, please try again' : null
     return (
       <View behavior="padding" style={styles.container}>
         <View style={styles.logoContainer}>
           {/* <Image style={styles.logo} source={require("./banana.png")} /> */}
           <Text style={styles.subtext}>Sign Up:</Text>
         </View>
+        {this.state.error && 
+          <Text 
+          style={{ textAlign: "center", color: "#ffffff", paddingBottom: 40 }}>
+          {text}
+          </Text>}
         <KeyboardAvoidingView>
           <TextInput
             value={this.state.name}

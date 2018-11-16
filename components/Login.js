@@ -33,23 +33,27 @@ export default class Login extends Component {
         error: false 
       })
       AsyncStorage.setItem("mainUser", JSON.stringify(mainUser))
-      if (user) this.props.navigation.navigate("Map")
-      else this.setState({
+      // this.props.navigation.navigate("Map")
+    })
+    .catch(() => {
+      this.setState({
         error: true
       })
     })
   }
 
   render() {
-    // const text = !this.state.error ? null : 'Incorrect user details, please try again'
-    // if (this.state.mainUser) return <Map navigation={this.props.navigation}/>
     return (
       <View style={styles.container}>
         <View behavior="padding" style={styles.container}>
           <View style={styles.logoContainer}>
             <Text style={styles.subtext}>Capture the Flag</Text>
           </View>
-          {this.state.error && (<Text>Incorrect user details, please try again</Text>)}
+          {this.state.error && 
+          <Text 
+          style={{ textAlign: "center", color: "#ffffff" }}>
+          Incorrect user details, please try again
+          </Text>}
           <KeyboardAvoidingView style={styles.keyboard}>
             <View style={styles.window}>
               <TextInput
